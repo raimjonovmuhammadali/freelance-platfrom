@@ -1,2 +1,2 @@
 // composables/useApi.js
-export const baseURL = 'https://freelancetest.pythonanywhere.com';
+export const baseURL = 'https://freelance77.pythonanywhere.com';

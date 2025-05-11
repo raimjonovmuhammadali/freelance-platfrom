@@ -6,9 +6,9 @@ const items = ref([]);
 const loading = ref(true); // boshlanishida true bo‘lsin
 const error = ref(null);
 
-const getCategory = async () => {
+const getJobs = async () => {
   try {
-    const response = await fetch(`${baseURL}/projects`);
+    const response = await fetch(`${baseURL}/jobs`);
     if (!response.ok) {
       throw new Error("Ma’lumot yuklanmadi");
     }
@@ -22,7 +22,7 @@ const getCategory = async () => {
 };
 
 onMounted(() => {
-  getCategory();
+  getJobs();
 });
 </script>
 
@@ -38,21 +38,34 @@ onMounted(() => {
   </div>
 
   <!-- Ma’lumotlar -->
-  <div v-else class="w-full flex flex-wrap justify-between items-center gap-4">
+ <div v-else class="grid gap-4 md:grid-cols-3">
     <nuxt-link
-      to="/workes/1"
-      class="w-full md:w-[32%] bg-white shadow-md p-6 rounded-lg flex flex-col gap-2 items-start"
+      v-for="item in items"
+      :key="item.id"
+      :to="`/workes/${item.id}`"
+      class="w-full bg-white  shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 rounded-xl flex flex-col gap-4 items-start group"
+      :aria-label="`View details for ${item.title}`"
     >
-      <h2 class="text-[#333333] text-lg font-semibold">Web dasturchi kerak</h2>
-      <h2 class="text-pink-500 text-[14px]">3 000 000 dan / 1 yil tajriba</h2>
-      <p class="text-gray-700 text-[14px] font-bold">
-        IT SOFT
-      </p>
-      <p class="text-gray-600 text-[14px]">
-        Farg'ona
-      </p>
-
-      <button class="text-[14px] px-5 py-2 text-white rounded-md cursor-pointer" style="background-color: darkblue; width: 100px;">Bog'lanish</button>
+      <div class="flex flex-col gap-2 w-full">
+        <h2
+          class="text-gray-900  text-xl font-bold tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200"
+        >
+          {{ item.title }}
+        </h2>
+        <h3 class="text-pink-500 dark:text-pink-400 text-base font-semibold">
+          {{ item.budget }}
+        </h3>
+        <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed line-clamp-3">
+          {{ item.description }}
+        </p>
+      </div>
+      <button
+        class="bg-blue-900 dark:bg-blue-800 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-blue-800 dark:hover:bg-blue-700 transition-colors duration-200 w-full md:w-auto"
+        :aria-label="`Contact for ${item.title}`"
+        @click.prevent
+      >
+        Bog'lanish
+      </button>
     </nuxt-link>
   </div>
 </template>

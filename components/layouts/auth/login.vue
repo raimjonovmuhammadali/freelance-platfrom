@@ -57,7 +57,7 @@ const login = async () => {
 
 
 <template>
-  <div class="bg-white p-6 rounded-xl shadow-md w-[500px]">
+  <div class="w-full max-w-[500px] mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-md">
     <div class="flex justify-between items-start mb-4">
       <h2 class="text-2xl font-bold text-gray-800">Kirish</h2>
       <nuxt-link to="/">

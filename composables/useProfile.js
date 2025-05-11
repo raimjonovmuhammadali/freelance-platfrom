@@ -18,7 +18,7 @@ export const useProfile = () => {
 
     loading.value = true
     try {
-      const res = await fetch(`${baseURL}/profile`, {
+      const res = await fetch(`${baseURL}/profile/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -30,6 +30,7 @@ export const useProfile = () => {
 
       const data = await res.json()
       profileData.value = data
+      localStorage.setItem('userID', data.id)
     } catch (err) {
       error.value = err.message || 'Xatolik yuz berdi'
     } finally {
