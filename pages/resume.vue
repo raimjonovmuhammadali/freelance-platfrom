@@ -36,7 +36,7 @@ onMounted(() => {
   <main class="w-full bg-[#F8F8F8] py-4">
     <section class="px-4 py-6">
       <div
-        class="w-full md:w-[90%] flex flex-wrap md:flex-nowrap items-center justify-center md:justify-between gap-4 mx-auto"
+        class="w-full md:w-[90%] flex flex-wrap md:flex-nowrap items-center  gap-4 mx-auto"
       >
         <div
           class="text-center bg-white w-full md:w-[20%] h-[100px] flex flex-col items-center justify-center text-gray-600 leading-[30px] font-normal shadow-md" v-for="item in items" :key="item.id"
@@ -67,7 +67,7 @@ onMounted(() => {
           <input
             class="flex-grow bg-transparent focus:outline-none focus:ring-0 focus:border-transparent"
             type="text"
-            placeholder="Поиск по вакансиям"
+            placeholder="Izlash"
           />
         </div>
 
@@ -75,7 +75,7 @@ onMounted(() => {
           <button
             class="text-[#849A9C] flex items-center justify-center border-[#849A9C] border px-6 py-3 cursor-pointer"
           >
-            Фильтр (5)
+            Qidirish
           </button>
         </div>
       </div>

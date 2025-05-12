@@ -47,7 +47,7 @@ onMounted(() => {
           Dunyoning istalgan nuqtasidan loyihalarda ishlang. Eng yaxshi vakansiya va freelanserlar bazasi.
         </p>
         <nuxt-link
-          to="/signup"
+          to="/auth/"
           class="inline-block bg-blue-500 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-600 transition-all duration-200"
         >
           {{ isLogin ? "Ish joylashtirish" : "Ro'yxatdan o'tish" }}
@@ -82,16 +82,16 @@ onMounted(() => {
           />
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
-          <button
+          <nuxt-link to="/work"
             class="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-all"
           >
             Barcha vakansiyalar
-          </button>
-          <button
+          </nuxt-link>
+          <nuxt-link to="/resume"
             class="w-full sm:w-auto bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-all"
           >
             Barcha rezyumelar
-          </button>
+          </nuxt-link>
         </div>
       </nav>
     </section>
@@ -107,10 +107,11 @@ onMounted(() => {
           class="bg-white p-4 rounded-md shadow-sm hover:shadow-md transition-all duration-200 text-center"
         >
           <img
-            :src="`${baseURL}${item.image}`"
+            :src="`${item.image}`"
             :alt="item.name"
             class="w-12 h-12 mx-auto mb-2"
           />
+
           <p class="text-gray-700">{{ item.name }}</p>
         </div>
       </div>

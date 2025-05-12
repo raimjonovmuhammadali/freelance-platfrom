@@ -8,6 +8,10 @@ const job = ref(null);
 const loading = ref(true);
 const error = ref(null);
 
+definePageMeta({
+  middleware: "auth",
+});
+
 // Fetch job, skills, and client data
 const getJob = async () => {
   try {
