@@ -1,25 +1,53 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { baseURL } from "@/composables/useApi";
+import { useRoute } from "vue-router";
 
-const items = ref([]);
-const loading = ref(true); // boshlanishida true bo‘lsin
+const item = ref(null); // Changed from items to item since API returns a single object
+const loading = ref(true);
 const error = ref(null);
 
+const route = useRoute();
+
+// Fetch resume data
 const getCategory = async () => {
+  const id = route.params.id;
   try {
-    const response = await fetch(`${baseURL}/projects`);
+    const response = await fetch(`${baseURL}/resumes/${id}`);
     if (!response.ok) {
       throw new Error("Ma’lumot yuklanmadi");
     }
     const data = await response.json();
-    items.value = data;
+    item.value = data;
   } catch (err) {
     error.value = err.message || "Xatolik yuz berdi";
+    alert(error.value);
   } finally {
-    loading.value = false; // ma’lumotlar yuklandi yoki xato bo‘ldi
+    loading.value = false;
   }
 };
+
+// Navigate to resume file
+const openResume = (fileUrl) => {
+  if (!fileUrl || typeof fileUrl !== "string") {
+    alert("Noto‘g‘ri fayl URL manzili");
+    return;
+  }
+  const absoluteUrl = fileUrl.startsWith("http")
+    ? fileUrl
+    : `${baseURL}${fileUrl.startsWith("/") ? fileUrl : `/${fileUrl}`}`;
+  window.location.href = absoluteUrl;
+};
+
+// Format date for display
+const formattedDate = computed(() => {
+  if (!item.value?.created_date) return "";
+  return new Date(item.value.created_date).toLocaleDateString("uz-UZ", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+});
 
 onMounted(() => {
   getCategory();
@@ -27,59 +55,68 @@ onMounted(() => {
 </script>
 
 <template>
-  <section>
+  <section class="min-h-screen bg-gray-50">
     <LayoutsNavbar />
 
-    <main class="w-full">
-      <section class="w-[90%] mx-auto py-5 flex flex-col md:flex-row justify-between gap-5">
-        <div
-          class="bg-gray-200 p-5 w-full md:w-[30%] h-[300px] flex flex-col gap-2 items-center justify-center text-center rounded-md"
-        >
+    <main class="container mx-auto px-4 py-8">
+      <!-- Loading State -->
+      <div v-if="loading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="text-center text-red-500 py-8">
+        <p>{{ error }}</p>
+      </div>
+
+      <!-- Content -->
+      <section v-else-if="item" class="flex flex-col md:flex-row gap-6">
+        <!-- Profile Card -->
+        <div class="bg-white shadow-lg rounded-lg p-6 w-full md:w-1/3 flex flex-col items-center text-center">
           <img
             src="~/assets/images/card1.png"
-            alt=""
-            class="rounded-full w-[100px] h-[100px]"
+            alt="Profile"
+            class="rounded-full w-24 h-24 object-cover mb-4"
           />
-          <div class="flex flex-col gap-2 items-center">
-            <h2 class="text-[#333333] text-lg font-semibold">
-              Muhammadali Rayimjonov
-            </h2>
-            <h2 class="text-pink-500 text-[14px]">3 000 000 dan</h2>
-            <div class="w-full flex gap-2 items-center">
-              <p class="text-gray-500 text-[12px]">Web dasturchi</p>
-              <p class="text-gray-500 text-[12px]">Frontend</p>
-              <p class="text-gray-500 text-[12px]">Telegram bot</p>
-            </div>
-            <p class="text-gray-600 text-[14px]">Farg'ona</p>
+          <h2 class="text-xl font-bold text-gray-800">{{ item.title }}</h2>{{ item }}
+          <p class="text-pink-500 text-sm mt-1">3,000,000 UZS dan</p>
+          <div class="flex gap-2 mt-2">
+            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Web dasturchi</span>
+            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Frontend</span>
+            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Telegram bot</span>
           </div>
+          <p class="text-gray-600 text-sm mt-2">Farg'ona</p>
+          <button
+            @click="openResume(item.resume_file)"
+            class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          >
+            Rezyumeni ko‘rish
+          </button>
         </div>
 
-        <div class="bg-gray-200 p-5 w-full md:w-[70%] flex flex-col gap-2 rounded-md">
-          <h1 class="text-[20px] font-bold">Qilgan ishlarim</h1>
-          <hr />
-          <div class="w-full flex flex-wrap justify-between gap-2 md:gap-0">
-            <nuxt-link
-              v-for="item in items"
-              :key="item.id"
-              to=""
-              class="w-full md:w-[33%] bg-white shadow-md p-6 rounded-lg flex flex-col flex-wrap gap-2"
-            >
-              <img
-                :src="`${baseURL}${item.image}`"
-                alt=""
-                class="w-full h-[200px] md:h-[200px] object-cover"
-              />
-              <h2 class="text-[#333333] text-lg font-semibold">
-                {{ item.title }}
-              </h2>
-              <h2 class="text-pink-500 text-[14px]">{{ item.city }}</h2>
-              <p class="text-gray-600">
-                {{ item.description }}
-              </p>
-            </nuxt-link>
+        <!-- Work Details -->
+        <div class="bg-white shadow-lg rounded-lg p-6 w-full md:w-2/3">
+          <h1 class="text-2xl font-bold text-gray-800 mb-4">Qilgan ishlarim</h1>
+          <hr class="mb-4" />
+          <div class="flex flex-col gap-4">
+            <!-- Single Work Item (since API returns one object) -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <h2 class="text-lg font-semibold text-gray-800">{{ item.title }}</h2>
+              <p class="text-sm text-gray-600 mt-1">{{ item.summary }}</p>
+              <p class="text-xs text-gray-500 mt-2">Yaratilgan: {{ formattedDate }}</p>
+            </div>
           </div>
         </div>
       </section>
+
+      <!-- Empty State -->
+      <div v-else class="text-center text-gray-500 py-8">
+        <p>Ma’lumot topilmadi</p>
+      </div>
     </main>
   </section>
 </template>
+
+<style scoped>
+/* Add custom styles if needed */
+</style>
