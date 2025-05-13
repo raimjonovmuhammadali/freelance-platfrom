@@ -74,18 +74,13 @@ onMounted(() => {
         <!-- Profile Card -->
         <div class="bg-white shadow-lg rounded-lg p-6 w-full md:w-1/3 flex flex-col items-center text-center">
           <img
-            src="~/assets/images/card1.png"
+            :src="item.user.profile_picture"
             alt="Profile"
             class="rounded-full w-24 h-24 object-cover mb-4"
           />
-          <h2 class="text-xl font-bold text-gray-800">{{ item.title }}</h2>{{ item }}
-          <p class="text-pink-500 text-sm mt-1">3,000,000 UZS dan</p>
-          <div class="flex gap-2 mt-2">
-            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Web dasturchi</span>
-            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Frontend</span>
-            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Telegram bot</span>
-          </div>
-          <p class="text-gray-600 text-sm mt-2">Farg'ona</p>
+          <h2 class="text-xl font-bold text-gray-800">{{ item.user.first_name }}{{ item.user.last_name }}</h2>
+          <p class="text-gray-500 text-sm mt-1">{{ item.user.email }}</p>
+          <p class="text-gray-600 text-sm mt-2">{{ item.user.location }}</p>
           <button
             @click="openResume(item.resume_file)"
             class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"

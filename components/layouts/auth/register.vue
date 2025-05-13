@@ -160,22 +160,9 @@ const register = async () => {
     // API javobini konsolga chiqarish
     console.log("API javobi:", JSON.stringify(data.value, null, 2));
 
-    // Tokenlarni localStorage ga saqlash
-    if (data.value?.access && data.value?.refresh) {
-      localStorage.setItem("access_token", data.value.access);
-      localStorage.setItem("refresh_token", data.value.refresh);
-      console.log("Tokenlar saqlandi:", {
-        access_token: data.value.access,
-        refresh_token: data.value.refresh,
-      });
-    } else {
-      console.warn("API javobida tokenlar topilmadi:", data.value);
-      errors.value.general = "Tokenlar qaytarilmadi, iltimos qayta urinib ko‘ring.";
-    }
-
     // Muvaffaqiyatli registratsiya
     alert("Ro‘yxatdan o‘tish muvaffaqiyatli yakunlandi!");
-    router.push("/");
+    router.push("/auth");
   } catch (err) {
     errors.value.general = "Server bilan bog‘lanishda xatolik.";
     console.error("Server xatosi:", {

@@ -53,7 +53,7 @@ onMounted(() => {
           {{ item.title }}
         </h2>
         <h3 class="text-pink-500 dark:text-pink-400 text-base font-semibold">
-          {{ Math.floor(item.budget) }}
+          ${{ Math.floor(item.budget) }}
         </h3>
         <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed line-clamp-3">
           {{ item.description }}

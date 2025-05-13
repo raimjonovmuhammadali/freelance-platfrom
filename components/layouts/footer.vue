@@ -4,7 +4,7 @@
   >
     <div class="flex justify-center gap-4">
       <a
-        href="https://t.me/milliyhunar"
+        href=""
         target="_blank"
         aria-label="Telegram sahifamiz"
         class="text-amber-600 hover:text-amber-700 transition-all duration-200"
@@ -12,7 +12,7 @@
         <img src="~/assets/icon/tg.svg" alt="instagram" class="w-[20px] h-[20px]">
       </a>
       <a
-        href="https://instagram.com/milliyhunar"
+        href=""
         target="_blank"
         aria-label="Instagram sahifamiz"
         class="text-amber-600 hover:text-amber-700 transition-all duration-200"

@@ -98,7 +98,7 @@ const login = async () => {
     <p v-if="successMessage" class="text-green-500 text-center text-sm mt-2">{{ successMessage }}</p>
 
     <p class="text-center text-sm text-gray-500 mt-4 cursor-pointer" @click="emit('change-tab', 'register')">
-      Sizda hali akkaunt mavjud emasm?
+      Sizda hali akkaunt mavjud emasmi?
     </p>
   </div>
 </template>

@@ -38,11 +38,11 @@ onMounted(() => {
       <div
         class="w-full md:w-[90%] flex flex-wrap md:flex-nowrap items-center gap-4 mx-auto"
       >
-        <div
+        <nuxt-link :to="`/category/${item.id}`"
           class="text-center bg-white w-full md:w-[20%] h-[100px] flex flex-col items-center justify-center text-gray-600 leading-[30px] font-normal shadow-md" v-for="item in items" :key="item.id"
         >
           <p>{{ item.name }}</p>
-        </div>
+        </nuxt-link>
       </div>
     </section>
     <section class="w-full px-4">

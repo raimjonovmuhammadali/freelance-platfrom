@@ -25,6 +25,10 @@ export const useProfile = () => {
       })
 
       if (!res.ok) {
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        localStorage.removeItem('userID')
+        routerKey.push('/auth')
         throw new Error('Ma’lumot yuklanmadi')
       }
 
