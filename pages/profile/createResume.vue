@@ -1,108 +1,97 @@
-```vue
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useProfile } from '@/composables/useProfile';
 
 const router = useRouter();
 const { profileData, fetchProfile } = useProfile();
 
-onMounted(() => {
-  if (!profileData.value) {
-    fetchProfile();
-  }
-});
-
-
-
-// Forma ma'lumotlari
+// Form state
 const form = ref({
-  title: "",
-  summary: "",
+  title: '',
+  summary: '',
   resume_file: null,
 });
 
-// Xato xabari
-const errorMessage = ref("");
+// Status states
+const errorMessage = ref('');
+const successMessage = ref('');
+const isSubmitting = ref(false);
 
-// Muvaffaqiyat xabari
-const successMessage = ref("");
-
-// Fayl o‘zgarganda
+// File change handler
 const onFileChange = (event) => {
-  form.value.resume_file = event.target.files[0];
+  const file = event.target.files[0];
+  if (file && file.type !== 'application/pdf') {
+    errorMessage.value = 'Faqat PDF fayllar qabul qilinadi.';
+    form.value.resume_file = null;
+    return;
+  }
+  form.value.resume_file = file;
 };
 
-// Forma yuborish
+// Form submission
 const submitForm = async () => {
-  errorMessage.value = "";
-  successMessage.value = "";
+  errorMessage.value = '';
+  successMessage.value = '';
+  isSubmitting.value = true;
 
-  // Validatsiya
-  if (!form.value.title) {
-    errorMessage.value = "Iltimos, sarlavha kiriting.";
-    console.error("Validatsiya xatosi: Sarlavha bo‘sh");
+  // Validation
+  if (!form.value.title.trim()) {
+    errorMessage.value = 'Iltimos, sarlavha kiriting.';
+    isSubmitting.value = false;
     return;
   }
   if (!form.value.resume_file) {
-    errorMessage.value = "Iltimos, PDF fayl yuklang.";
-    console.error("Validatsiya xatosi: PDF fayl yuklanmagan");
+    errorMessage.value = 'Iltimos, PDF fayl yuklang.';
+    isSubmitting.value = false;
     return;
   }
   if (!profileData.value?.id) {
-    errorMessage.value = "Foydalanuvchi ID topilmadi. Iltimos, tizimga kiring.";
-    console.error("Validatsiya xatosi: Foydalanuvchi ID topilmadi");
+    errorMessage.value = 'Foydalanuvchi ID topilmadi. Iltimos, tizimga kiring.';
+    isSubmitting.value = false;
     return;
   }
 
-  // FormData yaratish
+  // Prepare FormData
   const formData = new FormData();
-  formData.append("title", form.value.title);
-  formData.append("summary", form.value.summary || "");
-  formData.append("user", profileData.value?.id);
-  formData.append("resume_file", form.value.resume_file);
-
-  // FormData ni konsolga chiqarish
-  const formDataEntries = {};
-  for (const [key, value] of formData.entries()) {
-    formDataEntries[key] = value instanceof File ? value.name : value;
-  }
-  console.log("API ga yuboriladigan ma'lumotlar:", formDataEntries);
+  formData.append('title', form.value.title.trim());
+  formData.append('summary', form.value.summary.trim());
+  formData.append('user', profileData.value.id);
+  formData.append('resume_file', form.value.resume_file);
 
   try {
+    const token = localStorage.getItem('access_token');
+    if (!token) throw new Error('Tizimga kirish talab qilinadi.');
+
     const response = await $fetch(`${baseURL}/resumes/`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        Authorization: `Bearer ${token}`,
       },
       body: formData,
     });
 
-    // API javobini konsolga chiqarish
-    console.log("API javobi:", response);
-
-    // Muvaffaqiyatli yuborildi
-    successMessage.value = "Rezyume muvaffaqiyatli qo‘shildi!";
-    alert("Rezyume muvaffaqiyatli qo‘shildi!");
-    router.push("/profile"); // Profil sahifasiga yo‘naltirish
+    successMessage.value = 'Rezyume muvaffaqiyatli qo‘shildi!';
+    form.value = { title: '', summary: '', resume_file: null }; // Reset form
+    setTimeout(() => router.push('/'), 1000); // Delayed redirect for better UX
   } catch (err) {
-    // Xato xabarini tahlil qilish
-    let errorMsg = "Rezyume qo‘shishda xatolik yuz berdi.";
-    if (err.data) {
-      errorMsg =
-        err.data.detail ||
-        err.data.error ||
-        Object.values(err.data).flat().join(", ") ||
-        "Noma'lum server xatosi";
-    }
-    errorMessage.value = errorMsg;
-    console.error("API xatosi:", {
-      message: errorMsg,
-      status: err.status,
-      data: err.data,
-      fullError: err,
-    });
+    errorMessage.value =
+      err.data?.detail ||
+      err.data?.error ||
+      Object.values(err.data || {}).flat().join(', ') ||
+      'Rezyume qo‘shishda xatolik yuz berdi.';
+    console.error('API xatosi:', err);
+  } finally {
+    isSubmitting.value = false;
   }
 };
+
+// Fetch profile on mount
+onMounted(async () => {
+  if (!profileData.value) {
+    await fetchProfile();
+  }
+});
 </script>
 
 <template>
@@ -113,12 +102,12 @@ const submitForm = async () => {
         Rezyume Qo‘shish
       </h2>
 
-      <!-- Muvaffaqiyat xabari -->
+      <!-- Success message -->
       <p v-if="successMessage" class="text-green-600 text-sm mb-4 text-center">
         {{ successMessage }}
       </p>
 
-      <!-- Xato xabari -->
+      <!-- Error message -->
       <p v-if="errorMessage" class="text-red-500 text-sm mb-4 text-center">
         {{ errorMessage }}
       </p>
@@ -129,10 +118,11 @@ const submitForm = async () => {
           <label class="block text-gray-700 font-medium mb-1" for="title">Sarlavha</label>
           <input
             id="title"
-            v-model="form.title"
+            v-model.trim="form.title"
             type="text"
             required
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            :disabled="isSubmitting"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
           />
         </div>
 
@@ -141,9 +131,10 @@ const submitForm = async () => {
           <label class="block text-gray-700 font-medium mb-1" for="summary">Qisqacha ma'lumot</label>
           <input
             id="summary"
-            v-model="form.summary"
+            v-model.trim="form.summary"
             type="text"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            :disabled="isSubmitting"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
           />
         </div>
 
@@ -155,7 +146,8 @@ const submitForm = async () => {
             type="file"
             accept=".pdf"
             required
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-green-600 file:text-white hover:file:bg-green-700"
+            :disabled="isSubmitting"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-green-600 file:text-white hover:file:bg-green-700 disabled:opacity-50"
             @change="onFileChange"
           />
         </div>
@@ -164,13 +156,14 @@ const submitForm = async () => {
         <div class="text-center">
           <button
             type="submit"
-            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition duration-200"
+            :disabled="isSubmitting"
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            Yuborish
+            <span v-if="isSubmitting">Yuborilmoqda...</span>
+            <span v-else>Yuborish</span>
           </button>
         </div>
       </form>
     </div>
   </section>
 </template>
-```

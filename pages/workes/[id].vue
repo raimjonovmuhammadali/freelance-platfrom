@@ -22,6 +22,7 @@ const getJob = async () => {
       throw new Error("Ma’lumot yuklanmadi");
     }
     const jobData = await jobResponse.json();
+    
 
     // Fetch skill details for each skill ID
     if (jobData.skills_required && jobData.skills_required.length > 0) {
@@ -38,7 +39,7 @@ const getJob = async () => {
     }
 
     // Fetch client data
-    const clientResponse = await fetch(`${baseURL}/profile/${jobData.client}`);
+    const clientResponse = await fetch(`${baseURL}/profile/${jobData.client.id}`);
     if (!clientResponse.ok) {
       throw new Error("Mijoz ma’lumotlari yuklanmadi");
     }

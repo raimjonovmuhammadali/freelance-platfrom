@@ -147,28 +147,28 @@ const submitJob = async () => {
             v-model="form.title"
             type="text"
             required
-            placeholder="Masalan: Vue.js dasturchi kerak"
+            placeholder="Masalan: Hunarmandchilar kerak"
             class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
 
         <div>
           <label class="block text-gray-700 font-medium mb-1" for="description">
-            Loyiha tavsifi
+            Ish tavsifi
           </label>
           <textarea
             id="description"
             v-model="form.description"
             rows="5"
             required
-            placeholder="Loyihangiz haqida batafsil yozing..."
+            placeholder="Ish haqida batafsil yozing..."
             class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           ></textarea>
         </div>
 
         <div>
           <label class="block text-gray-700 font-medium mb-1" for="budget">
-            Byudjet (UZS yoki USD)
+            Byudjet (USD)
           </label>
           <input
             id="budget"
