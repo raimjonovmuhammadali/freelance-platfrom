@@ -34,7 +34,13 @@ export const useProfile = () => {
       });
 
       profileData.value = response;
+      
       localStorage.setItem('userID', String(response.id));
+      if(response.is_freelancer == true){
+        localStorage.setItem('role', 'freelance')
+      }else{
+        localStorage.setItem('role', 'client')
+      }
     } catch (err) {
       error.value = err.data?.detail || err.message || 'Profil maʼlumotlarini yuklashda xatolik yuz berdi.';
       localStorage.removeItem('access_token');

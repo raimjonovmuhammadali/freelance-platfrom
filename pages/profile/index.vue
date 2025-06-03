@@ -42,7 +42,7 @@ const apiRequest = async (url, method = 'GET', token) => {
 const logout = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
-  router.push('/');
+  router.push('/auth/');
 };
 
 // Fetch resumes

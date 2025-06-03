@@ -96,7 +96,7 @@ onMounted(() => {
         <!-- Job Details -->
         <div class="w-full md:w-6/12 flex flex-col gap-4 rounded-xl">
           <nuxt-link
-            :to="`/jobs/${job.id}`"
+            to=""
             class="w-full bg-white dark:bg-gray-800 p-6 rounded-xl flex flex-col gap-4 items-start border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-300 group"
             :aria-label="`View details for ${job.title}`"
           >

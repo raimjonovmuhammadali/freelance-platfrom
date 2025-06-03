@@ -6,6 +6,7 @@ const items = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const isLogin = ref(false);
+const role = ref(false)
 
 const getCategory = async () => {
   loading.value = true;
@@ -26,6 +27,7 @@ const getCategory = async () => {
 onMounted(() => {
   if (process.client) {
     isLogin.value = !!localStorage.getItem('access_token');
+    role.value = localStorage.getItem('role');
   }
   getCategory();
 });
@@ -47,10 +49,10 @@ onMounted(() => {
           Dunyoning istalgan nuqtasidan loyihalarda ishlang. Eng yaxshi vakansiya va freelanserlar bazasi.
         </p>
         <nuxt-link
-          to="/auth/"
+          :to="isLogin ? role == 'client' ? '/profile/createWork' : role == 'freelance' ? '/profile/createResume' : '/auth/'  : '/auth/'"
           class="inline-block bg-blue-500 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-600 transition-all duration-200"
         >
-          {{ isLogin ? "Ish joylashtirish" : "Ro'yxatdan o'tish" }}
+          {{ isLogin ? role == 'client' ? 'Ish joylashtirish' : role == 'freelance' ? 'Resume qo\'shish' : ''  : 'Ro\'yxatdan o\'tish'}}
         </nuxt-link>
       </div>
     </section>
@@ -101,7 +103,7 @@ onMounted(() => {
       <div
         class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
       >
-        <div
+        <nuxt-link :to="`/category/${item.id}`"
           v-for="item in items"
           :key="item.id"
           class="bg-white p-4 rounded-md shadow-sm hover:shadow-md transition-all duration-200 text-center"
@@ -113,7 +115,7 @@ onMounted(() => {
           />
 
           <p class="text-gray-700">{{ item.name }}</p>
-        </div>
+        </nuxt-link>
       </div>
       <div v-if="loading" class="text-center text-gray-600 mt-4">
         Yuklanmoqda...
