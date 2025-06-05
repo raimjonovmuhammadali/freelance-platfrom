@@ -174,7 +174,7 @@ const submitJob = async () => {
             id="budget"
             v-model="form.budget"
             type="text"
-            placeholder="Masalan: $300 yoki 3 000 000 so‘m"
+            placeholder="Masalan: $300"
             class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
